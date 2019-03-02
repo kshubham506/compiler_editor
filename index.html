@@ -1,0 +1,398 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+            Editor for Code And Learn
+        </title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="ace/src/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="ace/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="ace/src/ext-language_tools.js"></script>
+        
+        <link rel="stylesheet" href="../includes/stylesheets/sidenav.css"> 
+    </head>
+    
+     <style>
+         
+          #but {       
+            position: absolute;
+            left:67%;
+            top:40%;
+            cursor: pointer;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 15px;
+            padding-top: 15px;
+            font-size:18px;
+           
+            }
+         button{
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
+         }
+         button:hover {
+                opacity: 0.8;
+            }
+        #editor {
+            border: 4px ridge;
+            border-color: black;
+            position: absolute;
+            left:0%;
+            top:0%;
+            width:60%;
+            height:70%;
+            }
+         #stdin{
+           position: absolute;
+            border:2px solid;
+            left:0.5%;
+            top:75%;
+            width:25%;
+            height:23%;
+               font-size: 18px;
+            }
+          #stdout{
+            position: absolute;
+            border:2px solid;
+            left:30%;
+            top:75%;
+            width:30%;
+            height:23%;
+            font-size: 18px;
+            }
+         #options{
+             position:absolute;
+             top:30% ;
+             left:65% ;
+             padding:10px;
+         }
+         #lang{
+             padding:10px;
+         }
+         .ads{
+             display:block;
+              position: absolute;
+                 left:63%;
+                top:75%;
+                width:35%;
+                height:25%;
+                background: none;
+               overflow:hidden;
+         }
+         
+          @media only screen and (max-height: 640px) , (max-width: 600px) {
+               #options{
+                     top:0% ;
+                     left:20% ;
+           
+                 }
+              #lang{
+                 padding:3px;
+             }
+            #but {       
+               
+                left:65%;
+                top:1.5%;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 5px;
+                padding-top: 5px;
+                font-size:14px;
+                }
+              .dots{
+                  position: fixed;
+                  top:1%;
+                  right:1%;
+              }
+              #editor {    
+                    left:0%;
+                    top:8%;
+                    width:98%;
+                    height:60%;
+            }
+            .ads{
+                
+                display:block;
+                left:3%;
+                top:70%;
+                width:93%;
+                height:13%;
+                background: none;
+               overflow:hidden;
+            }
+            #stdout{
+                border:1px solid;
+                left:3%;
+                top:85%;
+                width:93%;
+                height:30%;
+                font-size: 14px;
+            }
+            #stdin{
+                border:1px solid;
+                left:3%;
+                top:120%;
+                width:93%;
+                height:30%;
+               font-size: 14px;
+            }
+        
+         }
+         
+         
+    </style>
+<body style="background: linear-gradient(to right, #434343 , #000000);">
+       
+    
+    
+    <div id="options" style="float:right">
+        <select id="lang">
+            <option value="4">C (gcc 7.2.0)</option>    
+            <option value="10">C++ (g++ 7.2.0)</option>
+            <option value="16">C# (mono 5.4.0)</option>
+            <option value="18">Clojure (1.8.0)</option>    
+            <option value="20">Elixir (1.5.1)</option>
+            <option value="21">Erlang (OTP 20.0)</option>    
+            <option value="22">Go (1.9)</option>
+            <option value="23">Haskell (ghc 8.2.1)</option>
+            <option value="26">Java (OpenJDK 9)</option>
+            <option value="27">Java (OpenJDK 8)</option>
+            <option value="29">JavaScript</option>
+            <option value="31">OCaml (4.05.0)</option>    
+            <option value="33">Pascal (fpc 3.0.0)</option>
+            <option value="34">Python (3.6.0)</option>    
+            <option value="36">Python (2.7.9)</option>
+            <option value="38">Ruby (2.4.0)</option>
+            <option value="42">Rust (1.20.0)</option>   
+        </select>
+    </div>
+    
+    <div id="editor"></div>
+    
+    <div id="input">
+        <textarea id="stdin" placeholder="Enter inputs Here if Any." rows="10" cols="60" ></textarea>
+    </div>
+    <div id="output">
+        <textarea id="stdout" placeholder="Output:"  disabled></textarea>
+    </div>
+    
+     
+    
+    <button id="but" type="submit" onclick="load()" style="">Submit</button>
+  
+   
+       
+  <p id="temp"></p>
+    
+    
+         <script>    
+             
+            var editor = ace.edit("editor");
+             editor.setFontSize(16);
+             editor.setTheme("ace/theme/twilight");
+             ace.require("ace/src/language_tools");
+             editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+             
+              $.getScript("ace/src/mode-c_cpp.js");
+             editor.getSession().setMode("ace/mode/c_cpp");
+             
+            $(document).ready(function() {
+                $("#lang").change(function() {
+                    var l = $(this).val();
+                    var fil="";
+                    if(l==4)
+                     {
+                        fil="c_cpp";
+                     }
+                 else if(l==10)
+                     {
+                         fil="c_cpp";
+                     }
+                 else if(l==16)
+                     {
+                         fil="csharp";
+                     }
+                 else if(l==18)
+                     {
+                         fil="clojure";
+                     }
+                
+                 else if(l==20)
+                     {
+                         fil="elixir";
+                     }
+                 else if(l==21)
+                     {
+                         fil="erlang";
+                     }
+                 else if(l==22)
+                     {
+                         fil="golang";
+                     }
+                 else if(l==23)
+                     {
+                         fil="haskell";
+                     }
+                
+                 else if(l==26)
+                     {
+                         fil="java";
+                         window.alert("JAVA Programs must have Main Class");
+                     }
+                 else if(l==27)
+                     {
+                         fil="java";
+                        window.alert("JAVA Programs must have Main Class");
+                     }
+                   else if(l==29)
+                     {
+                         fil="javascript";
+                     }
+                 else if(l==31)
+                     {
+                         fil="ocaml";
+                     }
+                 
+                 else if(l==33)
+                     {
+                         fil="pascal";
+                     }
+                 else if(l==34)
+                     {
+                         fil="python";
+                     }
+                   else if(l==36)
+                     {
+                         fil="python";
+                     }
+                 else if(l==38)
+                     {
+                         fil="ruby";
+                     }
+                 else if(l==42)
+                     {
+                         fil="rust";
+                     }
+
+                  $.getScript("ace/src/mode-"+fil+".js");
+                  editor.getSession().setMode("ace/mode/"+fil);
+                document.getElementById("stdout").innerHTML="Outputs Here";
+                     document.getElementById("but").disabled=false;
+                });
+            });
+             
+             function load()
+             {
+                    document.getElementById("stdout").innerHTML="Compiling...";
+                    document.getElementById("but").disabled=true;
+                   // document.getElementById("but").style.opacity="0.5";
+                    document.getElementById("but").style.cursor="not-allowed";
+                 
+                    compile();
+                    setTimeout(exec,500);
+                 
+                   
+                  
+             }
+           function  compile()
+             {
+                 var l=document.getElementById("lang").value;
+                 var abc=editor.getValue();
+                 var inp=document.getElementById("stdin").value;
+                 //window.alert("hello inp"+inp);
+                 
+                 inp=encodeURIComponent(inp);
+                 abc=encodeURIComponent(abc);
+                 
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            //document.getElementById("temp").innerHTML = this.responseText;
+                            var tok=this.responseText;
+                            if(tok==null)
+                                setTimeout(compile,100);
+                        }
+                    };
+                    xmlhttp.open("GET", "main.php?meth="+abc+"&inp="+inp+"&lang="+l, true);
+                    xmlhttp.send();
+                   // document.getElementById("temp").innerHTML+="Token generated";
+                    //setTimeout(res,5000);
+             }
+            
+             function exec()
+                 {
+                     var sta="",myobj="",msg="";
+                     document.getElementById("temp").innerHTML +="<br>";
+                     var xmlhttp1 = new XMLHttpRequest();
+                    xmlhttp1.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                           // document.getElementById("temp").innerHTML += this.responseText;
+                             myobj = JSON.parse(this.responseText);
+                            sta= myobj.status.id;
+                                    if(sta==1 || sta==2)
+                                   {
+                                      msg="Waiting in queue/processing"; 
+                                      setTimeout(exec,100);
+                                   }
+                                    else if(sta==3)
+                                    {
+                                        msg= "Successfully Compiled:\n\n";
+                                         msg+=myobj.stdout;
+                                        document.getElementById("stdout").innerHTML=msg;
+                                        // window.alert(msg);
+                                    }
+                                    else if(sta==6)
+                                    {
+                                          msg= "Compilation error:\n\n";
+                                          msg+=myobj.compile_output;
+                                        document.getElementById("stdout").innerHTML=msg;
+                                         // window.alert(msg);
+                                    }
+                                    else if(sta==7 || sta==8 || sta==9 || sta==10 || sta==11 || sta==12)
+                                    {
+                                            msg="Runtime Error:\n\n";
+                                        msg+=myobj.stderr+"\n";
+                                        msg+=myobj.message;
+                                        document.getElementById("stdout").innerHTML=msg;
+                                           // window.alert(msg);
+                                    }
+                                    else if(sta==13)
+                                    {
+                                             msg="Internal Malfunction\n";
+                                        document.getElementById("stdout").innerHTML=msg;    
+                                            // window.alert(msg); 
+                                    }
+																		 else
+                                   {
+                                     // msg="Waiting in queue/processing"; 
+                                      setTimeout(exec,100);
+                                   }
+                             document.getElementById("but").disabled=false;
+                            //document.getElementById("but").style.opacity="1";
+                            document.getElementById("but").style.cursor="pointer";
+                                       
+                                   
+                        }
+                    };
+                     xmlhttp1.open("GET","main.php?meth=token&inp=null&lang=null",true);
+                     xmlhttp1.send();
+                     
+                   
+                     
+                 }
+             
+           
+        </script>
+        
+     
+
+    </body>
+</html>
